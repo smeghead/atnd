@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Basic Settings
+BASEDIR=$(dirname $0)
+PGNAME=$(basename $0)
+
+# Database
+DB_NAME="$BASEDIR/$PGNAME.db"
+CMD_CONNECT="sqlite3 $DB_NAME"
+
+# Utility
+function exec_sql() {
+	local sql=${1?"SQL is required."}
+	echo "$sql" | $CMD_CONNECT
+}
+
+function create_atnd() {
+	local msg=${1?"Message is required."}
+	msg=${msg/\'/\'\'}
+	local sql="INSERT INTO logs (msg, created_at) VALUES ('$msg', julianday('now'));"
+
+	exec_sql "$sql"
+}
+
+function list_atnd() {
+	local sql="SELECT datetime(created_at, 'localtime'), msg FROM logs ORDER BY created_at DESC LIMIT 5;"
+
+	exec_sql "$sql"
+}
+
+# Initialize Database
+if [ ! -e $DB_NAME ]; then
+	exec_sql "CREATE TABLE logs ( \
+		id INTEGER PRIMARY KEY, \
+		msg TEXT NOT NULL, \
+		created_at REAL NOT NULL);"
+fi
+
+# Parse Options
+LIST_MODE=0
+while getopts "l" OPTION; do
+	case $OPTION in
+		l)
+			LIST_MODE=1
+			;;
+		*)
+			;;
+	esac
+done
+shift $(($OPTIND - 1))
+
+if [ "x$1" != "x" ]; then
+	create_atnd $1
+fi
+if [ "x$LIST_MODE" == "x1" ]; then
+	list_atnd
+fi
