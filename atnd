@@ -1,5 +1,25 @@
 #!/bin/bash
 
+###########################################################
+#
+# Clone repo:
+#  git clone git://gist.github.com/973208.git attendance
+#
+# Edit your .bashrc
+#  export ATND_TOOL=/home/fukata/usr/local/attendance
+#  export PATH=$PATH:$ATND_TOOL
+#
+# Reload .bashrc:
+#  source ~/.bashrc
+#
+# Usage:
+#  atnd [-l] msg
+#
+#   OPTIONS:
+#    -l display latest messages.
+#
+###########################################################
+
 # Basic Settings
 BASEDIR=$(dirname $0)
 PGNAME=$(basename $0)
