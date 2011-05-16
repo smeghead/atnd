@@ -29,6 +29,18 @@ PGNAME=$(basename $0)
 DB_NAME="$BASEDIR/$PGNAME.db"
 CMD_CONNECT="sqlite3 $DB_NAME"
 
+function show_help() {
+	usage="Usage: 
+  atnd [-l num] [-d ids] msg 
+
+OPTIONS: 
+  -l display latest messages. 
+  -d delete messages. separated comma ID.
+"
+	echo $usage
+	exit 1
+}
+
 # Utility
 function exec_sql() {
 	local sql=${1?"SQL is required."}
@@ -71,13 +83,14 @@ fi
 
 # Parse Options
 LIST_MODE=0
-LIST_NUM=5
+LIST_NUM=0
 DELETE_MODE=0
 DELETE_ID=0
-while getopts "ld:" OPTION; do
+while getopts "l:d:" OPTION; do
 	case $OPTION in
 		l)
 			LIST_MODE=1
+			LIST_NUM=$OPTARG
 			;;
 		d)
 			DELETE_MODE=1
@@ -90,12 +103,11 @@ done
 shift $(($OPTIND - 1))
 
 if [ "x$LIST_MODE" == "x1" ]; then
-	if [ "$1" != "" ]; then
-		LIST_NUM=$1
-	fi
 	list_atnd $LIST_NUM
 elif [ "x$DELETE_MODE" == "x1" ]; then
 	delete_atnd "$DELETE_ID"
 elif [ "x$1" != "x" ]; then
 	create_atnd "$1"
+else
+	show_help
 fi
