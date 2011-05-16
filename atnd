@@ -13,10 +13,11 @@
 #  source ~/.bashrc
 #
 # Usage:
-#  atnd [-l] msg
+#  atnd [-l num] [-d ids] msg
 #
 #   OPTIONS:
-#    -l display latest messages.
+#    -l display latest messages. default num is 5.
+#    -d delete messages. separated comma ID.
 #
 ###########################################################
 
@@ -43,9 +44,21 @@ function create_atnd() {
 }
 
 function list_atnd() {
-	local sql="SELECT datetime(created_at, 'localtime'), msg FROM logs ORDER BY created_at DESC LIMIT 5;"
+	local num=${1?"NUM is required."}
+	local sql="SELECT id, datetime(created_at, 'localtime'), msg FROM logs ORDER BY created_at DESC LIMIT $num;"
 
 	exec_sql "$sql"
+}
+
+function delete_atnd() {
+	local ids=${1?"ID is required."}
+	ORG_IFS=$IFS
+	IFS=,
+	for id in $ids; do
+		IFS=$ORG_IFS
+		local sql="DELETE FROM logs WHERE id=$id;"
+		exec_sql "$sql"
+	done
 }
 
 # Initialize Database
@@ -58,10 +71,17 @@ fi
 
 # Parse Options
 LIST_MODE=0
-while getopts "l" OPTION; do
+LIST_NUM=5
+DELETE_MODE=0
+DELETE_ID=0
+while getopts "ld:" OPTION; do
 	case $OPTION in
 		l)
 			LIST_MODE=1
+			;;
+		d)
+			DELETE_MODE=1
+			DELETE_ID=$OPTARG
 			;;
 		*)
 			;;
@@ -69,9 +89,13 @@ while getopts "l" OPTION; do
 done
 shift $(($OPTIND - 1))
 
-if [ "x$1" != "x" ]; then
-	create_atnd "$1"
-fi
 if [ "x$LIST_MODE" == "x1" ]; then
-	list_atnd
+	if [ "$1" != "" ]; then
+		LIST_NUM=$1
+	fi
+	list_atnd $LIST_NUM
+elif [ "x$DELETE_MODE" == "x1" ]; then
+	delete_atnd "$DELETE_ID"
+elif [ "x$1" != "x" ]; then
+	create_atnd "$1"
 fi
