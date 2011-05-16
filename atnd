@@ -70,7 +70,7 @@ done
 shift $(($OPTIND - 1))
 
 if [ "x$1" != "x" ]; then
-	create_atnd $1
+	create_atnd "$1"
 fi
 if [ "x$LIST_MODE" == "x1" ]; then
 	list_atnd
