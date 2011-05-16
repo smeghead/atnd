@@ -107,12 +107,14 @@ while getopts "l:d:h" OPTION; do
 done
 shift $(($OPTIND - 1))
 
-if [ "x$LIST_MODE" == "x1" ]; then
-	list_atnd $LIST_NUM
-elif [ "x$DELETE_MODE" == "x1" ]; then
-	delete_atnd "$DELETE_ID"
-elif [ "x$1" != "x" ]; then
+if [ "x$1" != "x" ]; then
 	create_atnd "$1"
 else
 	show_help
+fi
+if [ "x$LIST_MODE" == "x1" ]; then
+	list_atnd $LIST_NUM
+fi
+if [ "x$DELETE_MODE" == "x1" ]; then
+	delete_atnd "$DELETE_ID"
 fi
