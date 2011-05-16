@@ -13,11 +13,12 @@
 #  source ~/.bashrc
 #
 # Usage:
-#  atnd [-l num] [-d ids] msg
+#  atnd [-h] [-l num] [-d ids] msg
 #
 #   OPTIONS:
 #    -l display latest messages. default num is 5.
 #    -d delete messages. separated comma ID.
+#    -h show help.
 #
 ###########################################################
 
@@ -30,15 +31,15 @@ DB_NAME="$BASEDIR/$PGNAME.db"
 CMD_CONNECT="sqlite3 $DB_NAME"
 
 function show_help() {
-	usage="Usage: 
-  atnd [-l num] [-d ids] msg 
+	cat << EOF
+Usage: 
+  atnd [-h] [-l num] [-d ids] msg 
 
 OPTIONS: 
   -l display latest messages. 
   -d delete messages. separated comma ID.
-"
-	echo $usage
-	exit 1
+  -h show help.
+EOF
 }
 
 # Utility
@@ -86,8 +87,12 @@ LIST_MODE=0
 LIST_NUM=0
 DELETE_MODE=0
 DELETE_ID=0
-while getopts "l:d:" OPTION; do
+while getopts "l:d:h" OPTION; do
 	case $OPTION in
+		h)
+			show_help
+			exit 1
+			;;
 		l)
 			LIST_MODE=1
 			LIST_NUM=$OPTARG
