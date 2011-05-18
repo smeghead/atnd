@@ -50,7 +50,7 @@ function exec_sql() {
 
 function create_atnd() {
 	local msg=${1?"Message is required."}
-	msg=${msg/\'/\'\'}
+	msg=${msg//\'/\'\'}
 	local sql="INSERT INTO logs (msg, created_at) VALUES ('$msg', julianday('now'));"
 
 	exec_sql "$sql"
