@@ -17,14 +17,16 @@
 
 ##Tips:
 
-###when svn or git command execute, register atnd.
-    #for atnd
-    function precmd() {
-      lastcmd=$(history -n -1 | head -1)
-      case $(echo $lastcmd | cut -d ' ' -f 1) in
-        git|svn)
-          atnd "$lastcmd [$(pwd)]"
-          ;;
-      esac
-    }
+###when svn or git command execute, register atnd.(zsh only)
+
+add below in ~/.zshrc
+	#for atnd
+	function precmd() {
+	  lastcmd=$(history -n -1 | head -1)
+	  case $(echo $lastcmd | cut -d ' ' -f 1) in
+	    git|svn)
+	      atnd "$lastcmd [$(pwd)]"
+	      ;;
+	  esac
+	}
 
