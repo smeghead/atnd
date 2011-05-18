@@ -9,6 +9,8 @@
 	source ~/.bashrc
 
 ##Usage:
-	atnd [-l] msg
+	atnd [-h] [-l num] [-d ids] msg 
 ###OPTIONS:
 - -l display latest messages.
+- -d delete messages. separated comma ID.
+- -h show help.
