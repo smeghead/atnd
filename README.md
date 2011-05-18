@@ -14,3 +14,17 @@
 - -l display latest messages.
 - -d delete messages. separated comma ID.
 - -h show help.
+
+##Tips:
+
+###when svn or git command execute, register atnd.
+    #for atnd
+    function precmd() {
+      lastcmd=$(history -n -1 | head -1)
+      case $(echo $lastcmd | cut -d ' ' -f 1) in
+        git|svn)
+          atnd "$lastcmd [$(pwd)]"
+          ;;
+      esac
+    }
+
