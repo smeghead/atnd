@@ -32,3 +32,15 @@ add below in ~/.zshrc
 	  esac
 	}
 
+###when svn or git command execute, register atnd.(bash only, simple version)
+
+	function precmd() {
+	  lastcmd=$(history 1 | awk '{printf("%s %s %s %s %s\n", $2, $3, $4, $5, $6);}')
+	  case $(echo $lastcmd | cut -d ' ' -f 1) in
+	    git|svn)
+	      atnd "$lastcmd [$(pwd)]"
+	      ;;
+	  esac
+	}
+	PROMPT_COMMAND='precmd'
+
