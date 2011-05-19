@@ -16,9 +16,10 @@
 #  atnd [-h] [-l num] [-d ids] msg
 #
 #   OPTIONS:
-#    -l display latest messages. default num is 5.
-#    -d delete messages. separated comma ID.
-#    -h show help.
+#  -L       display latest 10 messages. 
+#  -l num   display latest given count messages. 
+#  -d ids   delete messages. separated comma ID.
+#  -h       show help.
 #
 ###########################################################
 
@@ -36,9 +37,10 @@ Usage:
   atnd [-h] [-l num] [-d ids] msg 
 
 OPTIONS: 
-  -l display latest messages. 
-  -d delete messages. separated comma ID.
-  -h show help.
+  -L       display latest 10 messages. 
+  -l num   display latest given count messages. 
+  -d ids   delete messages. separated comma ID.
+  -h       show help.
 EOF
 }
 
@@ -60,7 +62,7 @@ function list_atnd() {
 	local num=${1?"NUM is required."}
 	local sql="SELECT id, datetime(created_at, 'localtime'), msg FROM logs ORDER BY created_at DESC LIMIT $num;"
 
-	exec_sql "$sql"
+	exec_sql "$sql" | tac
 }
 
 function delete_atnd() {
@@ -87,11 +89,15 @@ LIST_MODE=0
 LIST_NUM=0
 DELETE_MODE=0
 DELETE_ID=0
-while getopts "l:d:h" OPTION; do
+while getopts "Ll:d:h" OPTION; do
 	case $OPTION in
 		h)
 			show_help
 			exit 1
+			;;
+		L)
+			LIST_MODE=1
+			LIST_NUM=10
 			;;
 		l)
 			LIST_MODE=1

@@ -11,9 +11,10 @@
 ##Usage:
 	atnd [-h] [-l num] [-d ids] msg 
 ###OPTIONS:
-- -l display latest messages.
-- -d delete messages. separated comma ID.
-- -h show help.
+- -L       display latest 10 messages. 
+- -l num   display latest given count messages. 
+- -d ids   delete messages. separated comma ID.
+- -h       show help.
 
 ##Tips:
 
