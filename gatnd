@@ -33,7 +33,7 @@ def initialize():
 def insert_log(message):
     global BASEDIR
     conn = sqlite3.connect(BASEDIR + '/atnd.db')
-    conn.execute(u"INSERT INTO logs (msg, created_at) VALUES (?, julianday('now'));", (message,))
+    conn.execute(u"INSERT INTO logs (msg, created_at) VALUES (?, julianday('now'));", (message.decode("utf-8"),))
     conn.commit()
     conn.close()
 
