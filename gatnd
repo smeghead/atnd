@@ -1,0 +1,44 @@
+#!/usr/bin/python
+#-*- coding:utf-8 -*-
+
+import os, sys, codecs
+import gtk
+import sqlite3
+sys.stdout = codecs.lookup('utf_8')[-1](sys.stdout) # to fix EncodeError.
+
+BASEDIR = os.path.dirname(__file__)
+
+entry = None
+
+def logging(widget):
+    insert_log(entry.get_text())
+    gtk.main_quit()
+
+def initialize():
+    window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    window.set_title = u'gatnd'
+    window.set_position(gtk.WIN_POS_CENTER)
+    window.connect('destroy', lambda x: gtk.main_quit())
+    main = gtk.HBox()
+    window.add(main)
+    global entry
+    entry = gtk.Entry()
+    entry.set_width_chars(50)
+    main.add(entry)
+    button = gtk.Button('logging')
+    button.connect('clicked', logging)
+    main.add(button)
+    window.show_all()
+
+def insert_log(message):
+    global BASEDIR
+    conn = sqlite3.connect(BASEDIR + '/atnd.db')
+    conn.execute(u"INSERT INTO logs (msg, created_at) VALUES (?, julianday('now'));", (message,))
+    conn.commit()
+    conn.close()
+
+
+initialize()
+gtk.main()
+
+# vim: set ts=4 sw=4 sts=4 expandtab fenc=utf-8:

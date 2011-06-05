@@ -30,6 +30,7 @@ order by created_at asc
     records = []
     for row in c: # rowはtuple
         records.append({'msg': row[0], 'created_at': row[1]})
+    conn.close()
     return records
 
 def display(year, month, records):
