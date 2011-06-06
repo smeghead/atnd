@@ -31,12 +31,14 @@ def entry_key(widget, event):
         entry.set_text(msg)
         entry.select_region(0, len(msg.decode('utf-8')))
 
-    print key
+    print 'control(%s) key (%s)' % (control, key)
     if key == 'Return':
         logging(None)
     elif control and key == 'p':
         history_index -= 1
+        print 'set_histories_message begin'
         set_histories_message(history_index)
+        print 'set_histories_message end'
     elif control and key == 'n':
         history_index += 1
         set_histories_message(history_index)
