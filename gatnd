@@ -1,6 +1,9 @@
 #!/usr/bin/python
 #-*- coding:utf-8 -*-
 
+import pygtk
+pygtk.require('2.0')
+
 import os, sys, codecs
 import gtk
 import sqlite3
@@ -21,7 +24,7 @@ def entry_key(widget, event):
     global histories, history_index
     global entry
     control = False
-    if event.state == gtk.gdk.CONTROL_MASK or event.state == gtk.gdk.MOD2_MASK:
+    if event.state == gtk.gdk.CONTROL_MASK or event.state == gtk.gdk.MOD2_MASK or event.state == 33554436:
         control = True
     key = gtk.gdk.keyval_name(event.keyval)
 
