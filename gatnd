@@ -31,7 +31,7 @@ def entry_key(widget, event):
         entry.set_text(msg)
         entry.select_region(0, len(msg.decode('utf-8')))
 
-    print 'control(%s) key (%s)' % (control, key)
+    print 'control(%s) key (%s) event.state (%d)' % (control, key, event.state)
     if key == 'Return':
         logging(None)
     elif control and key == 'p':
