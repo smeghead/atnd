@@ -30,7 +30,7 @@ def entry_key(widget, event):
 
     def set_histories_message(index):
         global histories, entry
-        msg = histories[index]['msg']
+        msg = histories[index % len(histories)]['msg']
         entry.set_text(msg)
         entry.select_region(0, len(msg.decode('utf-8')))
 
