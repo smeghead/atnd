@@ -13,8 +13,9 @@ histories = None
 history_index = 0
 
 def logging(widget):
-    insert_log(entry.get_text())
-    gtk.main_quit()
+    if len(entry.get_text().decode('utf-8')) > 0:
+        insert_log(entry.get_text())
+        gtk.main_quit()
 
 def entry_key(widget, event):
     global histories, history_index
