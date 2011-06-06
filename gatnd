@@ -9,10 +9,38 @@ sys.stdout = codecs.lookup('utf_8')[-1](sys.stdout) # to fix EncodeError.
 BASEDIR = os.path.dirname(__file__)
 
 entry = None
+histories = None
+history_index = 0
 
 def logging(widget):
     insert_log(entry.get_text())
     gtk.main_quit()
+
+def entry_key(widget, event):
+    global histories, history_index
+    global entry
+    control = False
+    if event.state == gtk.gdk.CONTROL_MASK or event.state == gtk.gdk.MOD2_MASK:
+        control = True
+    key = gtk.gdk.keyval_name(event.keyval)
+
+    def set_histories_message(index):
+        global histories, entry
+        msg = histories[index]['msg']
+        entry.set_text(msg)
+        entry.select_region(0, len(msg.decode('utf-8')))
+
+    print key
+    if key == 'Return':
+        logging(None)
+    elif control and key == 'p':
+        history_index -= 1
+        set_histories_message(history_index)
+    elif control and key == 'n':
+        history_index += 1
+        set_histories_message(history_index)
+    elif key == 'Escape':
+        gtk.main_quit()
 
 def initialize():
     window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -24,19 +52,37 @@ def initialize():
     global entry
     entry = gtk.Entry()
     entry.set_width_chars(50)
+    entry.connect('key_press_event', entry_key)
     main.add(entry)
     button = gtk.Button('logging')
     button.connect('clicked', logging)
     main.add(button)
     window.show_all()
+    global histories
+    histories = get_histories()
 
 def insert_log(message):
     global BASEDIR
     conn = sqlite3.connect(BASEDIR + '/atnd.db')
-    conn.execute(u"INSERT INTO logs (msg, created_at) VALUES (?, julianday('now'));", (message.decode("utf-8"),))
+    conn.execute(u"INSERT INTO logs (msg, created_at) VALUES (?, julianday('now'));", (message.decode('utf-8'),))
     conn.commit()
     conn.close()
 
+def get_histories():
+    conn = sqlite3.connect(BASEDIR + '/atnd.db')
+    c = conn.cursor()
+    sql = u"""
+select msg, datetime(created_at, 'localtime') from logs
+order by created_at desc
+limit 30
+"""
+    c.execute(sql)
+    records = []
+    for row in c: # rowはtuple
+        records.append({'msg': row[0], 'created_at': row[1]})
+    conn.close()
+    records.reverse()
+    return records
 
 initialize()
 gtk.main()
