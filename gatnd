@@ -30,7 +30,7 @@ def entry_key(widget, event):
 
     def set_histories_message(index):
         global histories, entry
-        msg = histories[index % len(histories)]['msg']
+        msg = histories[index % len(histories)]
         entry.set_text(msg)
         entry.select_region(0, len(msg.decode('utf-8')))
 
@@ -78,14 +78,14 @@ def get_histories():
     conn = sqlite3.connect(BASEDIR + '/atnd.db')
     c = conn.cursor()
     sql = u"""
-select msg, datetime(created_at, 'localtime') from logs
+select msg from logs
 order by created_at desc
 limit 30
 """
     c.execute(sql)
     records = []
     for row in c: # rowはtuple
-        records.append({'msg': row[0], 'created_at': row[1]})
+        records.append(row[0])
     conn.close()
     records.reverse()
     return records
